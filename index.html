@@ -206,14 +206,14 @@ h2{font-size:clamp(1.7rem,3.4vw,2.6rem);line-height:1.2;max-width:20ch}
 .showreel .video{position:relative;margin-top:clamp(28px,3.6vw,48px);aspect-ratio:16/9;
   background:var(--zacht);overflow:hidden}
 .showreel .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.video-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:20px;text-align:center;padding:20px}
-.play{width:clamp(58px,7vw,84px);aspect-ratio:1;border-radius:50%;background:var(--marker);
-  position:relative;flex:none}
-.play::after{content:"";position:absolute;left:57%;top:50%;transform:translate(-50%,-50%);
-  border-left:.28em solid var(--paper);border-top:.18em solid transparent;border-bottom:.18em solid transparent;
-  font-size:clamp(58px,7vw,84px)}
-.video-tekst{font-family:var(--sans);font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink50)}
+/* De thumbnail heeft de afspeelknop al ingebrand — geen tweede knop eroverheen. */
+.video-ph{position:absolute;inset:0;width:100%;padding:0;border:0;background:var(--zacht);
+  cursor:pointer;font:inherit;color:inherit;display:block}
+.video-ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.video-ph::after{content:"";position:absolute;inset:0;background:rgba(38,16,22,.10);transition:background .3s}
+.video-ph:hover::after,.video-ph:focus-visible::after{background:rgba(38,16,22,0)}
+.video-ph:hover img{transform:scale(1.015)}
+@media (prefers-reduced-motion:reduce){.video-ph:hover img{transform:none}}
 
 /* aanbod */
 .aanbod{border-top:1px solid var(--ink)}
@@ -320,7 +320,9 @@ form{font-family:var(--sans)}
 
 <!-- ============ HEADER ============ -->
 <section class="header">
+  <!-- TODO beeld ontbreekt nog. Zet het bestand in img/ en haal het commentaar weg.
   <img src="img/liza-cornet-podium.jpg" alt="Liza Cornet spreekt op een podium, gesticulerend, tegen een blauw verlicht decor." width="1700" height="1133" fetchpriority="high">
+  -->
   <div class="header-in">
     <div class="wrap">
       <p class="kicker">Spreker over wetenschapscommunicatie</p>
@@ -389,11 +391,13 @@ form{font-family:var(--sans)}
 
 <!-- ============ KENMERKEN ============ -->
 <section class="kenmerken" id="kenmerken">
+  <!-- TODO beeld ontbreekt nog. Zet het bestand in img/ en haal het commentaar weg (band + bijschrift).
   <div class="beeld">
     <img src="img/liza-cornet-zaal.jpg" alt="Liza Cornet op het podium met haar hand omhoog, tegenover een volle zaal waarin mensen hun hand opsteken." width="1250" height="535" loading="lazy" decoding="async">
   </div>
-  <div class="wrap kenmerken-in">
-    <p class="bijschrift">Opening jubileumcongres WODC</p>
+  -->
+  <div class="wrap kenmerken-in" style="padding-top:clamp(60px,8vw,120px)">
+    <!-- <p class="bijschrift">Opening jubileumcongres WODC</p> -->
     <div class="rv">
       <div class="k-grid">
         <div>
@@ -421,16 +425,10 @@ form{font-family:var(--sans)}
     </div>
 
     <div class="video rv">
-      <!-- PLAATSHOUDER — vervang het blok hieronder door de embed, bijvoorbeeld:
-        <iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID"
-                title="Showreel Liza Cornet"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen loading="lazy"></iframe>
-      -->
-      <div class="video-ph">
-        <span class="play" aria-hidden="true"></span>
-        <span class="video-tekst">Showreel — hier komt de video</span>
-      </div>
+      <!-- Klik laadt pas dan de YouTube-iframe: sneller, en geen cookies vooraf. -->
+      <button class="video-ph" type="button" id="showreel-start" data-video="ukGd0rPnHOQ">
+        <img src="img/showreel-thumbnail.png" alt="Showreel afspelen — Liza Cornet in een televisiestudio, tussen twee camera's." width="1280" height="720" loading="lazy" decoding="async">
+      </button>
     </div>
   </div>
 </section>
@@ -514,7 +512,7 @@ form{font-family:var(--sans)}
 <section class="sec" id="over" style="padding-top:0">
   <div class="wrap over">
     <figure class="rv">
-      <img src="img/liza-cornet-portret.jpg" alt="Portret van Liza Cornet, zittend op een plein voor een kantoorgebouw, lachend in de camera." width="1000" height="1250" loading="lazy" decoding="async">
+      <img src="img/liza-cornet-portret-staand.png" alt="Portret van Liza Cornet, lachend in de camera." width="1333" height="2000" loading="lazy" decoding="async">
     </figure>
     <div class="over-body rv">
       <p class="kicker" style="margin:0 0 1em">Over Liza</p>
@@ -528,8 +526,8 @@ form{font-family:var(--sans)}
         <span>TEDx-spreker</span>
       </div>
       <div class="meer-links">
-        <a href="#">TEDx Talk bekijken</a>
-        <a href="#">Interview NPO Radio 1</a>
+        <a href="https://www.youtube.com/watch?v=-6M_ZNtziBw" target="_blank" rel="noopener">TEDx Talk bekijken</a>
+        <a href="https://www.nporadio1.nl/fragmenten/villa-vdb/c2e91a43-c5bb-4da7-ab50-68e55b935681/2023-01-31-duidelijke-wetenschapscommunicatie-is-belangrijk-in-de-strijd-tegen-fake-news" target="_blank" rel="noopener">Interview NPO Radio 1</a>
       </div>
     </div>
   </div>
@@ -653,10 +651,10 @@ form{font-family:var(--sans)}
         <div class="kaart-kop"><h3>Foto's</h3></div>
         <p>Vrij te gebruiken bij aankondigingen van een lezing.</p>
         <div class="bestanden">
-          <a href="pers/liza-cornet-portret-staand.jpg" download>Portret (staand)</a>
-          <a href="pers/liza-cornet-portret-liggend.jpg" download>Portret (liggend)</a>
+          <a href="img/liza-cornet-portret-staand.png" download>Portret (staand)</a>
+          <a href="img/liza-cornet-portret-liggend.png" download>Portret (liggend)</a>
         </div>
-        <span class="toelichting">JPG, hoge resolutie</span>
+        <span class="toelichting">PNG, hoge resolutie</span>
       </div>
 
       <div class="kaart rv">
@@ -709,6 +707,19 @@ form{font-family:var(--sans)}
         + '?subject=' + encodeURIComponent('Aanvraag ' + (data.get('Organisatie')||'') + ' — ' + (data.get('Datum')||'datum n.t.b.'))
         + '&body='    + encodeURIComponent('Aanvraag via lizacornet.com\n\n' + regels.join('\n'));
       status.textContent = 'Je mailprogramma opent met de aanvraag erin — even versturen en hij is onderweg.';
+    });
+  }
+
+  /* showreel: iframe pas laden na een klik */
+  var start = document.getElementById('showreel-start');
+  if(start){
+    start.addEventListener('click', function(){
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + start.dataset.video + '?autoplay=1&rel=0';
+      f.title = 'Showreel Liza Cornet';
+      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      f.allowFullscreen = true;
+      start.replaceWith(f);
     });
   }
 
