@@ -3,20 +3,28 @@
 Statische one-pager. Geen build, geen dependencies — `index.html` openen volstaat.
 Lokaal bekijken: `python3 -m http.server 8765` en dan <http://localhost:8765>.
 
-## Nog aan te leveren
+## Formulier
 
-Twee beelden ontbreken. Ze staan in `index.html` uitgecommentarieerd met een
-`TODO`-markering: bestand in `img/` zetten en het commentaar weghalen.
+De aanvraag gaat via `api/aanvraag.js` (Vercel-function) naar liza@yicco.com,
+verstuurd met [Resend](https://resend.com). Lukt dat niet, dan valt de pagina
+terug op `mailto:` zodat er nooit een aanvraag verdampt.
 
-| Pad | Waar |
-|---|---|
-| `img/liza-cornet-podium.jpg` | Header. Zonder beeld toont de header het diepe burgundy vlak — dat oogt bewust, dus geen haast. |
-| `img/liza-cornet-zaal.jpg` | Brede band boven de kenmerken (WODC-congres), incl. het bijschrift eronder. |
+Nodig om het live te laten werken:
+
+1. Resend-account op **liza@yicco.com**, API-key aanmaken.
+2. In Vercel bij Settings → Environment Variables: `RESEND_API_KEY`.
+3. Deployen. Klaar.
+
+Zolang het domein `yicco.com` niet in Resend geverifieerd is, verstuurt Resend
+alleen vanaf `onboarding@resend.dev` en alleen naar het adres van het account —
+voor dit formulier precies genoeg. Is het domein wél geverifieerd, zet dan
+`AANVRAAG_VAN` op bijv. `Website <aanvraag@yicco.com>`; met `AANVRAAG_NAAR`
+gaat de post naar een ander adres.
+
+Zelfcontrole van de function: `node test-aanvraag.js`.
 
 ## Nog te doen
 
-- Formulier post nu via `mailto:`. Wissel om naar Formspree of Netlify Forms zodra
-  de site live staat — zie het commentaar in het `<script>`-blok.
 - De pdf is 9,4 MB. Voor een downloadknop prima, maar comprimeren scheelt de
   bezoeker een hoop.
 

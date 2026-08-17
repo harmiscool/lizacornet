@@ -578,33 +578,33 @@ form{font-family:var(--sans)}
 
     <form id="aanvraagform" class="rv" novalidate>
       <div class="fields">
-        <div class="f"><label for="f-naam">Je naam</label><input id="f-naam" name="Naam" type="text" autocomplete="name" required></div>
+        <div class="f"><label for="f-naam">Je naam</label><input id="f-naam" name="naam" type="text" autocomplete="name" required></div>
         <div class="f"><label for="f-mail">E-mailadres</label><input id="f-mail" name="email" type="email" autocomplete="email" required></div>
-        <div class="f"><label for="f-org">Organisatie</label><input id="f-org" name="Organisatie" type="text" autocomplete="organization" required></div>
-        <div class="f"><label for="f-datum">Datum</label><input id="f-datum" name="Datum" type="date" required></div>
+        <div class="f"><label for="f-org">Organisatie</label><input id="f-org" name="organisatie" type="text" autocomplete="organization" required></div>
+        <div class="f"><label for="f-datum">Datum</label><input id="f-datum" name="datum" type="date" required></div>
         <div class="f"><label for="f-tijd">Tijdstip</label>
-          <select id="f-tijd" name="Tijdstip" required>
+          <select id="f-tijd" name="tijdstip" required>
             <option value="">Kies een dagdeel</option>
             <option>Ochtend</option><option>Middag</option><option>Avond</option>
             <option>Nog niet bekend</option>
           </select>
         </div>
         <div class="f"><label for="f-aantal">Hoeveel mensen</label>
-          <select id="f-aantal" name="Aantal mensen" required>
+          <select id="f-aantal" name="aantal" required>
             <option value="">Maak een schatting</option>
             <option>Tot 30</option><option>30 — 100</option><option>100 — 300</option>
             <option>Meer dan 300</option><option>Nog niet bekend</option>
           </select>
         </div>
-        <div class="f"><label for="f-loc">Locatie</label><input id="f-loc" name="Locatie" type="text" placeholder="Plaats of naam van de zaal" required></div>
+        <div class="f"><label for="f-loc">Locatie</label><input id="f-loc" name="locatie" type="text" placeholder="Plaats of naam van de zaal" required></div>
         <div class="f"><label for="f-soort">Waar denk je aan</label>
-          <select id="f-soort" name="Onderdeel">
+          <select id="f-soort" name="onderdeel">
             <option value="">Weet ik nog niet</option>
             <option>Keynote</option><option>Workshop</option>
           </select>
         </div>
         <div class="f full"><label for="f-toe">Toelichting — optioneel</label>
-          <textarea id="f-toe" name="Toelichting" placeholder="Wie zit er in de zaal, wat is de aanleiding, waar hoop je op?"></textarea>
+          <textarea id="f-toe" name="toelichting" placeholder="Wie zit er in de zaal, wat is de aanleiding, waar hoop je op?"></textarea>
         </div>
       </div>
       <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" hidden>
@@ -691,33 +691,39 @@ form{font-family:var(--sans)}
       status = document.getElementById('status'),
       datum = document.getElementById('f-datum');
   if(datum) datum.min = new Date().toISOString().slice(0,10);
-  /* Formspree-endpoint van liza@yicco.com. Leeg = de aanvraag wordt als
-     mail klaargezet in het mailprogramma van de bezoeker. */
-  var ENDPOINT = '';
-  function alsMail(data){
+  /* Terugvaloptie als /api/aanvraag niet bereikbaar is: de aanvraag wordt
+     klaargezet in het mailprogramma van de bezoeker. */
+  function alsMail(waarden){
     var regels = [];
-    data.forEach(function(v,k){ if(k.charAt(0) !== '_' && String(v).trim()) regels.push(k + ': ' + v); });
+    for(var k in waarden){
+      var el = form.elements[k], label = form.querySelector('label[for="' + (el && el.id) + '"]');
+      if(waarden[k]) regels.push((label ? label.textContent.replace(/ — optioneel$/,'') : k) + ': ' + waarden[k]);
+    }
     window.location.href = 'mailto:liza@yicco.com'
-      + '?subject=' + encodeURIComponent('Aanvraag ' + (data.get('Organisatie')||'') + ' — ' + (data.get('Datum')||'datum n.t.b.'))
+      + '?subject=' + encodeURIComponent('Aanvraag ' + (waarden.organisatie||'') + ' — ' + (waarden.datum||'datum n.t.b.'))
       + '&body='    + encodeURIComponent('Aanvraag via lizacornet.com\n\n' + regels.join('\n'));
-    status.textContent = 'Je mailprogramma opent met de aanvraag erin — even versturen en hij is onderweg.';
+    status.textContent = 'Versturen lukte niet — je mailprogramma opent met de aanvraag erin.';
   }
   if(form){
     form.addEventListener('submit', function(e){
       e.preventDefault();
       if(!form.checkValidity()){ form.reportValidity(); return; }
-      var data = new FormData(form);
-      if(!ENDPOINT){ alsMail(data); return; }
+      var waarden = {};
+      new FormData(form).forEach(function(v,k){ waarden[k] = v; });
       var knop = form.querySelector('button[type=submit]');
       knop.disabled = true;
       status.textContent = 'Bezig met versturen…';
-      fetch(ENDPOINT, {method:'POST', body:data, headers:{Accept:'application/json'}})
+      fetch('/api/aanvraag', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(waarden)
+      })
         .then(function(r){
           if(!r.ok) throw new Error(r.status);
           form.reset();
           status.textContent = 'Dank je — je aanvraag is verstuurd. Je hoort binnen twee werkdagen of het past.';
         })
-        .catch(function(){ alsMail(data); })
+        .catch(function(){ alsMail(waarden); })
         .then(function(){ knop.disabled = false; });
     });
   }
