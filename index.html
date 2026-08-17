@@ -84,7 +84,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:-.012e
   background:var(--diep);overflow:hidden}
 .header img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:52% 26%}
 /* op breed scherm het beeld naar rechts schuiven, zodat de tekst linksonder vrij komt */
-@media (min-width:900px){ .header img{width:136%;object-position:0% 22%} }
+@media (min-width:900px){ .header img{max-width:none;width:136%;object-position:0% 22%} }
 @media (min-width:1600px){ .header img{width:126%} }
 .header::after{content:"";position:absolute;inset:0;
   background:
@@ -130,7 +130,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:-.012e
 .kenmerken{background:var(--klei);color:var(--ink)}
 .kenmerken .beeld{width:100%;aspect-ratio:21/9;overflow:hidden;background:#0A1520}
 @media (max-width:760px){.kenmerken .beeld{aspect-ratio:4/3}}
-.kenmerken .beeld img{width:100%;height:100%;object-fit:cover;object-position:50% 46%}
+.kenmerken .beeld img{width:100%;height:100%;object-fit:cover;object-position:50% 82%}
 .kenmerken-in{padding-block:clamp(22px,2.8vw,34px) clamp(60px,8vw,120px)}
 .bijschrift{font-family:var(--sans);font-size:.82rem;color:var(--ink50);margin:0 0 clamp(30px,4vw,54px)}
 .k-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(26px,3.6vw,58px);
@@ -320,9 +320,7 @@ form{font-family:var(--sans)}
 
 <!-- ============ HEADER ============ -->
 <section class="header">
-  <!-- TODO beeld ontbreekt nog. Zet het bestand in img/ en haal het commentaar weg.
-  <img src="img/liza-cornet-podium.jpg" alt="Liza Cornet spreekt op een podium, gesticulerend, tegen een blauw verlicht decor." width="1700" height="1133" fetchpriority="high">
-  -->
+  <img src="img/liza-cornet-podium.jpg" alt="Liza Cornet spreekt op een podium, gesticulerend, tegen een blauw verlicht decor." width="2200" height="1466" fetchpriority="high">
   <div class="header-in">
     <div class="wrap">
       <p class="kicker">Spreker over wetenschapscommunicatie</p>
@@ -391,13 +389,11 @@ form{font-family:var(--sans)}
 
 <!-- ============ KENMERKEN ============ -->
 <section class="kenmerken" id="kenmerken">
-  <!-- TODO beeld ontbreekt nog. Zet het bestand in img/ en haal het commentaar weg (band + bijschrift).
   <div class="beeld">
-    <img src="img/liza-cornet-zaal.jpg" alt="Liza Cornet op het podium met haar hand omhoog, tegenover een volle zaal waarin mensen hun hand opsteken." width="1250" height="535" loading="lazy" decoding="async">
+    <img src="img/liza-cornet-zaal.jpg" alt="Liza Cornet op het podium met haar hand omhoog, tegenover een volle zaal waarin mensen hun hand opsteken." width="1250" height="833" loading="lazy" decoding="async">
   </div>
-  -->
-  <div class="wrap kenmerken-in" style="padding-top:clamp(60px,8vw,120px)">
-    <!-- <p class="bijschrift">Opening jubileumcongres WODC</p> -->
+  <div class="wrap kenmerken-in">
+    <p class="bijschrift">Opening jubileumcongres WODC</p>
     <div class="rv">
       <div class="k-grid">
         <div>
@@ -512,7 +508,7 @@ form{font-family:var(--sans)}
 <section class="sec" id="over" style="padding-top:0">
   <div class="wrap over">
     <figure class="rv">
-      <img src="img/liza-cornet-portret-staand.png" alt="Portret van Liza Cornet, lachend in de camera." width="1333" height="2000" loading="lazy" decoding="async">
+      <img src="img/liza-cornet-portret-over.jpg" alt="Portret van Liza Cornet, zittend op een plein voor een kantoorgebouw, lachend in de camera." width="800" height="1200" loading="lazy" decoding="async">
     </figure>
     <div class="over-body rv">
       <p class="kicker" style="margin:0 0 1em">Over Liza</p>
