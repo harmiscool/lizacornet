@@ -579,7 +579,7 @@ form{font-family:var(--sans)}
     <form id="aanvraagform" class="rv" novalidate>
       <div class="fields">
         <div class="f"><label for="f-naam">Je naam</label><input id="f-naam" name="Naam" type="text" autocomplete="name" required></div>
-        <div class="f"><label for="f-mail">E-mailadres</label><input id="f-mail" name="E-mail" type="email" autocomplete="email" required></div>
+        <div class="f"><label for="f-mail">E-mailadres</label><input id="f-mail" name="email" type="email" autocomplete="email" required></div>
         <div class="f"><label for="f-org">Organisatie</label><input id="f-org" name="Organisatie" type="text" autocomplete="organization" required></div>
         <div class="f"><label for="f-datum">Datum</label><input id="f-datum" name="Datum" type="date" required></div>
         <div class="f"><label for="f-tijd">Tijdstip</label>
@@ -607,6 +607,7 @@ form{font-family:var(--sans)}
           <textarea id="f-toe" name="Toelichting" placeholder="Wie zit er in de zaal, wat is de aanleiding, waar hoop je op?"></textarea>
         </div>
       </div>
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" hidden>
       <div class="form-foot">
         <button class="btn btn--ink" type="submit">Aanvraag versturen</button>
         <span class="privacy">Je hoort binnen twee werkdagen of het past. Je gegevens gebruik ik alleen om je aanvraag te beantwoorden.</span>
@@ -690,19 +691,34 @@ form{font-family:var(--sans)}
       status = document.getElementById('status'),
       datum = document.getElementById('f-datum');
   if(datum) datum.min = new Date().toISOString().slice(0,10);
+  /* Formspree-endpoint van liza@yicco.com. Leeg = de aanvraag wordt als
+     mail klaargezet in het mailprogramma van de bezoeker. */
+  var ENDPOINT = '';
+  function alsMail(data){
+    var regels = [];
+    data.forEach(function(v,k){ if(k.charAt(0) !== '_' && String(v).trim()) regels.push(k + ': ' + v); });
+    window.location.href = 'mailto:liza@yicco.com'
+      + '?subject=' + encodeURIComponent('Aanvraag ' + (data.get('Organisatie')||'') + ' — ' + (data.get('Datum')||'datum n.t.b.'))
+      + '&body='    + encodeURIComponent('Aanvraag via lizacornet.com\n\n' + regels.join('\n'));
+    status.textContent = 'Je mailprogramma opent met de aanvraag erin — even versturen en hij is onderweg.';
+  }
   if(form){
     form.addEventListener('submit', function(e){
       e.preventDefault();
       if(!form.checkValidity()){ form.reportValidity(); return; }
-      /* Nog geen server: de aanvraag wordt als mail klaargezet.
-         Vervang dit blok door een POST naar Formspree of Netlify Forms
-         zodra de site live gaat. */
-      var data = new FormData(form), regels = [];
-      data.forEach(function(v,k){ if(String(v).trim()) regels.push(k + ': ' + v); });
-      window.location.href = 'mailto:liza@yicco.com'
-        + '?subject=' + encodeURIComponent('Aanvraag ' + (data.get('Organisatie')||'') + ' — ' + (data.get('Datum')||'datum n.t.b.'))
-        + '&body='    + encodeURIComponent('Aanvraag via lizacornet.com\n\n' + regels.join('\n'));
-      status.textContent = 'Je mailprogramma opent met de aanvraag erin — even versturen en hij is onderweg.';
+      var data = new FormData(form);
+      if(!ENDPOINT){ alsMail(data); return; }
+      var knop = form.querySelector('button[type=submit]');
+      knop.disabled = true;
+      status.textContent = 'Bezig met versturen…';
+      fetch(ENDPOINT, {method:'POST', body:data, headers:{Accept:'application/json'}})
+        .then(function(r){
+          if(!r.ok) throw new Error(r.status);
+          form.reset();
+          status.textContent = 'Dank je — je aanvraag is verstuurd. Je hoort binnen twee werkdagen of het past.';
+        })
+        .catch(function(){ alsMail(data); })
+        .then(function(){ knop.disabled = false; });
     });
   }
 
